@@ -17,5 +17,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run tests
+        env:
+          PYTHONPATH: src:src/src
         run: |
-          pytest -q
+          python -m pytest -q tests
+
+        
+          
