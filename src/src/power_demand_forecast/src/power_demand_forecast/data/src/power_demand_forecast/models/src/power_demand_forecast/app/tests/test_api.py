@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from src.power_demand_forecast.app.main import app
+from power_demand_forecast.app.main import app
 
 client = TestClient(app)
 
