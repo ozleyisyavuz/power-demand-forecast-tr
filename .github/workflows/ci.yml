@@ -9,20 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Run tests
-        env:
-          PYTHONPATH: src:src/src:src/src/src
+
+      - name: Compute PYTHONPATH
         run: |
-          python -m pytest -q
+          python - <<'PY'
+          import os
 
-          
+          paths = set()
+          for root, dirs, files in os.walk("."):
+              if "power_demand_forecast" in dirs:
+                  paths.add(os.path.abspath(root))
 
-        
-          
+          pypath = ":".join(sorted(paths))
+          print("Detected PYTHONPATH:", pypath)
+
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"PYTHONPATH={pypath}\n")
+          PY
+
+      - name: Run tests
+        run: |
+          python -m pytest -q tests
